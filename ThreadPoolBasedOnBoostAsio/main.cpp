@@ -8,9 +8,20 @@
 
 #include "ThreadPool.h"
 
+void myThreadCallback()
+{
+    std::cout<<"myThreadCallback, thread id="<<std::this_thread::get_id()<<std::endl;
+    sleep(1);
+}
+
 int main()
 {
-    std::cout<<"Thread pool which based on boost asio lib"<<std::endl;
+    ThreadPool myThreadPool(8);
+    for(size_t i = 0;i < 10;++i)
+    {
+        myThreadPool.post(myThreadCallback);
+    }
+    
     return 0;
 }
 
