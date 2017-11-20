@@ -6,13 +6,16 @@
 
 #include <iostream>
 #include <thread>
+#include <mutex>
 
 #include "ThreadPool.h"
 
+std::mutex myMutex;
+
 void myThreadCallback()
 {
+    std::unique_lock<std::mutex> guard(myMutex);
     std::cout<<"myThreadCallback, thread id="<<std::this_thread::get_id()<<std::endl;
-    sleep(1);
 }
 
 int main()
