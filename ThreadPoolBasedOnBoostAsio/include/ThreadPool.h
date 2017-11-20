@@ -23,10 +23,10 @@ public:
     void post(ThreadCallBack cb);
 
 private:
+    boost::asio::io_service myIoService;
     //Just to prevent run() call of myIoService from returning 
     //when there is no more work to do.
     AsioServiceWorker myIoServiceWorker;
-    boost::asio::io_service myIoService;
     boost::thread_group myThreadGroup;
 };
 
