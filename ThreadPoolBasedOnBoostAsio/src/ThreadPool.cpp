@@ -23,8 +23,6 @@ ThreadPool::ThreadPool(size_t threadNum)
 
 ThreadPool::~ThreadPool()
 {
-    std::cout<<"ThreadPool, deconstruct"<<std::endl;
-    
     //Allow run() to exit
     myIoServiceWorker.reset();
     
@@ -32,6 +30,8 @@ ThreadPool::~ThreadPool()
     
     //Stop the io_service object's event processing loop.
     myIoService.stop(); 
+    
+    std::cout<<"ThreadPool, deconstruct done"<<std::endl;
 }
 
 void ThreadPool::post(ThreadCallBack cb)
