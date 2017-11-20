@@ -25,8 +25,11 @@ ThreadPool::~ThreadPool()
 {
     std::cout<<"ThreadPool, deconstruct"<<std::endl;
     
-    myIoService.reset();
+    //Allow run() to exit
+    myIoServiceWorker.reset();
+    
     myThreadGroup.join_all();
+    
     //Stop the io_service object's event processing loop.
     myIoService.stop(); 
 }
