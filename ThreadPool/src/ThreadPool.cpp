@@ -9,107 +9,107 @@
 #include "ThreadPool.h"
 
 ThreadPool::ThreadPool(size_t threadNum)
-	: myRunning(true)
-	, myThreadNum(threadNum)
+    : myRunning(true)
+    , myThreadNum(threadNum)
 {
-	std::cout<<"ThreadPool, construct"<<std::endl;
+    std::cout<<"ThreadPool, construct"<<std::endl;
 	
-	createThreadGroup();
+    createThreadGroup();
 }
 
 ThreadPool::~ThreadPool()
 {
-	std::cout<<"ThreadPool, deconstruct"<<std::endl;
+    std::cout<<"ThreadPool, deconstruct"<<std::endl;
 
-	for(auto task : myTaskQueue)
-	{
-		delete task;
-	}
-	myTaskQueue.clear();
+    for(auto task : myTaskQueue)
+    {
+        delete task;
+    }
+    myTaskQueue.clear();
 }
 
 void ThreadPool::createThreadGroup()
 {
-	std::cout<<"ThreadPool, createThreadGroup"<<std::endl;
+    std::cout<<"ThreadPool, createThreadGroup"<<std::endl;
 	
-	pthread_mutex_init(&myMutex, NULL);
-	pthread_cond_init(&myCond, NULL);
+    pthread_mutex_init(&myMutex, NULL);
+    pthread_cond_init(&myCond, NULL);
 	
-	myThreadGroup = (pthread_t*)malloc(sizeof(pthread_t) * myThreadNum);
-	for(int i = 0;i < myThreadNum;i++)
+    myThreadGroup = (pthread_t*)malloc(sizeof(pthread_t) * myThreadNum);
+    for(int i = 0;i < myThreadNum;i++)
+    {
+	int rlt = -1;
+	while(0 != rlt)
 	{
-		int rlt = -1;
-		while(0 != rlt)
-		{
-			rlt = pthread_create(&myThreadGroup[i], NULL, execute, this);
-		}
+	    rlt = pthread_create(&myThreadGroup[i], NULL, execute, this);
 	}
+    }
 
-	std::cout<<"ThreadPool, createThreadGroup done"<<std::endl;
+    std::cout<<"ThreadPool, createThreadGroup done"<<std::endl;
 }
 
 void ThreadPool::postTask(void (*func)(void* arg), void* arg)
 {
-	Task* task = new Task(func, arg);
+    Task* task = new Task(func, arg);
 
-	pthread_mutex_lock(&myMutex);
-	myTaskQueue.push_back(task);
-	pthread_cond_signal(&myCond);
-	pthread_mutex_unlock(&myMutex);
+    pthread_mutex_lock(&myMutex);
+    myTaskQueue.push_back(task);
+    pthread_cond_signal(&myCond);
+    pthread_mutex_unlock(&myMutex);
 }
 
 Task* ThreadPool::getTask()
 {
-	Task* task = NULL;
-	while(NULL == task)
+    Task* task = NULL;
+    while(NULL == task)
+    {
+        pthread_mutex_lock(&myMutex);
+	while(myTaskQueue.empty() && myRunning)
 	{
-	    pthread_mutex_lock(&myMutex);
-		while(myTaskQueue.empty() && myRunning)
-		{
-			pthread_cond_wait(&myCond, &myMutex);
-		}
-
-		if(!myRunning)
-		{
-			pthread_mutex_unlock(&myMutex);				  
-			break;
-		}
-
-		if(myTaskQueue.empty())
-		{
-			pthread_mutex_unlock(&myMutex);
-			continue;
-		}
-		else
-		{
-			task = myTaskQueue.front();
-			myTaskQueue.pop_front();
-			pthread_mutex_unlock(&myMutex);
-		}
+       	    pthread_cond_wait(&myCond, &myMutex);
 	}
+
+	if(!myRunning)
+	{
+	    pthread_mutex_unlock(&myMutex);				  
+	    break;
+	}
+
+	if(myTaskQueue.empty())
+	{		
+	    pthread_mutex_unlock(&myMutex);
+	    continue;
+	}
+	else
+	{
+	    task = myTaskQueue.front();
+	    myTaskQueue.pop_front();
+	    pthread_mutex_unlock(&myMutex);
+	}
+    }
 	
-	return task;
+    return task;
 }
 
 size_t ThreadPool::getTaskSize()
 {
-	pthread_mutex_lock(&myMutex);
-	size_t size = myTaskQueue.size();
-	pthread_mutex_unlock(&myMutex);
+    pthread_mutex_lock(&myMutex);
+    size_t size = myTaskQueue.size();
+    pthread_mutex_unlock(&myMutex);
 
-	return size;
+    return size;
 }
 
 size_t ThreadPool::getThreadNum()
 {
-	return myThreadNum;
+    return myThreadNum;
 }
 
 void ThreadPool::stop()
 {
-	std::cout<<"ThreadPool, stop"<<std::endl;
+    std::cout<<"ThreadPool, stop"<<std::endl;
 	
-	//pthread_mutex_lock(&myMutex);
+    //pthread_mutex_lock(&myMutex);
     myRunning = false;        
     pthread_cond_broadcast(&myCond);
     //pthread_mutex_unlock(&myMutex);   
@@ -125,13 +125,13 @@ void ThreadPool::stop()
     pthread_cond_destroy(&myCond);
     pthread_mutex_destroy(&myMutex);
 
-	std::cout<<"ThreadPool, stop done"<<std::endl;
+    std::cout<<"ThreadPool, stop done"<<std::endl;
 }
 
 void* ThreadPool::execute(void* arg)
 {
     pthread_t tid = pthread_self();
-	std::cout<<"ThreadPool, thread tid="<<tid<<" will execute:"<<std::endl;
+    std::cout<<"ThreadPool, thread tid="<<tid<<" will execute:"<<std::endl;
 	
     ThreadPool* pool = static_cast<ThreadPool*>(arg);
     while(pool->myRunning)
