@@ -17,7 +17,7 @@ void myThreadCallback(void* arg)
     int* val = static_cast<int*>(arg);
 
     std::unique_lock<std::mutex> guard(myMutex);
-	std::cout<<"myThreadCallback: "<<*val<<std::endl;
+    std::cout<<"myThreadCallback: "<<*val<<std::endl;
 }
 
 int main()
