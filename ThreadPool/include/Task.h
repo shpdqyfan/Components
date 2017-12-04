@@ -19,6 +19,11 @@ public:
         std::cout<<"Task, construct"<<std::endl;
     }
 
+    ~Task()
+    {
+        std::cout<<"Task, deconstruct"<<std::endl;
+    }
+
     void (*myFunc)(void* arg);
     void* myArg;
 
@@ -27,4 +32,3 @@ private:
 };
 
 #endif
-
