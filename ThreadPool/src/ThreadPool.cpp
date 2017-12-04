@@ -19,13 +19,13 @@ ThreadPool::ThreadPool(size_t threadNum)
 
 ThreadPool::~ThreadPool()
 {
-    std::cout<<"ThreadPool, deconstruct"<<std::endl;
-
     for(auto task : myTaskQueue)
     {
         delete task;
     }
     myTaskQueue.clear();
+
+    std::cout<<"ThreadPool, deconstruct done"<<std::endl;
 }
 
 void ThreadPool::createThreadGroup()
@@ -38,11 +38,11 @@ void ThreadPool::createThreadGroup()
     myThreadGroup = (pthread_t*)malloc(sizeof(pthread_t) * myThreadNum);
     for(int i = 0;i < myThreadNum;i++)
     {
-	int rlt = -1;
-	while(0 != rlt)
-	{
-	    rlt = pthread_create(&myThreadGroup[i], NULL, execute, this);
-	}
+        int rlt = -1;
+        while(0 != rlt)
+        {
+            rlt = pthread_create(&myThreadGroup[i], NULL, execute, this);
+        }
     }
 
     std::cout<<"ThreadPool, createThreadGroup done"<<std::endl;
@@ -64,28 +64,28 @@ Task* ThreadPool::getTask()
     while(NULL == task)
     {
         pthread_mutex_lock(&myMutex);
-	while(myTaskQueue.empty() && myRunning)
-	{
+        while(myTaskQueue.empty() && myRunning)
+        {
        	    pthread_cond_wait(&myCond, &myMutex);
-	}
+        }
 
-	if(!myRunning)
-	{
-	    pthread_mutex_unlock(&myMutex);				  
-	    break;
-	}
+        if(!myRunning)
+        {
+            pthread_mutex_unlock(&myMutex);				  
+            break;
+        }
 
-	if(myTaskQueue.empty())
-	{		
-	    pthread_mutex_unlock(&myMutex);
-	    continue;
-	}
-	else
-	{
-	    task = myTaskQueue.front();
-	    myTaskQueue.pop_front();
-	    pthread_mutex_unlock(&myMutex);
-	}
+        if(myTaskQueue.empty())
+        {		
+            pthread_mutex_unlock(&myMutex);
+            continue;
+	    }
+        else
+        {
+            task = myTaskQueue.front();
+            myTaskQueue.pop_front();
+            pthread_mutex_unlock(&myMutex);
+        }
     }
 	
     return task;
@@ -129,10 +129,7 @@ void ThreadPool::stop()
 }
 
 void* ThreadPool::execute(void* arg)
-{
-    pthread_t tid = pthread_self();
-    std::cout<<"ThreadPool, thread tid="<<tid<<" will execute:"<<std::endl;
-	
+{	
     ThreadPool* pool = static_cast<ThreadPool*>(arg);
     while(pool->myRunning)
     {
@@ -148,5 +145,3 @@ void* ThreadPool::execute(void* arg)
 	
     return 0;
 }
-
-
