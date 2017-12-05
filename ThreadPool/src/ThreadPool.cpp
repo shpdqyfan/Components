@@ -91,7 +91,7 @@ Task* ThreadPool::getTask()
     return task;
 }
 
-size_t ThreadPool::getTaskSize()
+size_t ThreadPool::getTaskNum()
 {
     pthread_mutex_lock(&myMutex);
     size_t size = myTaskQueue.size();
