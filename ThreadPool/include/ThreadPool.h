@@ -22,7 +22,7 @@ public:
     void postTask(void (*func)(void* arg), void* arg);
     Task* getTask();
     size_t getTaskNum();
-    size_t getThreadNum();
+    const size_t getThreadNum() const;
     void stop();
 
 private:
@@ -30,7 +30,7 @@ private:
     static void* execute(void* arg);
 
     bool myRunning;
-    size_t myThreadNum;
+    const size_t myThreadNum;
     std::deque<Task*> myTaskQueue;
     pthread_mutex_t myMutex;
     pthread_cond_t myCond;
