@@ -21,7 +21,7 @@ public:
 
     void postTask(void (*func)(void* arg), void* arg);
     Task* getTask();
-    size_t getTaskSize();
+    size_t getTaskNum();
     size_t getThreadNum();
     void stop();
 
