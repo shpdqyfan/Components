@@ -100,7 +100,7 @@ size_t ThreadPool::getTaskNum()
     return size;
 }
 
-size_t ThreadPool::getThreadNum()
+const size_t ThreadPool::getThreadNum() const 
 {
     return myThreadNum;
 }
