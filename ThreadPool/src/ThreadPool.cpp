@@ -109,10 +109,10 @@ void ThreadPool::stop()
 {
     std::cout<<"ThreadPool, stop"<<std::endl;
 	
-    //pthread_mutex_lock(&myMutex);
+    pthread_mutex_lock(&myMutex);
     myRunning = false;        
     pthread_cond_broadcast(&myCond);
-    //pthread_mutex_unlock(&myMutex);   
+    pthread_mutex_unlock(&myMutex);   
 
     for(int i = 0;i < myThreadNum;i++)
     {
