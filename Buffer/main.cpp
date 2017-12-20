@@ -20,13 +20,14 @@ public:
 
 void read(const Data& d)
 {
-    std::cout<<"read, data="<<d.myValue<<std::endl;
+    std::cout<<"read, data="<<d.myValue<<" in thread="<<std::this_thread::get_id()<<std::endl;
 }
 
 Buffer<Data> myBuffer(read);
 
 void write(const Data& d)
 {
+    std::cout<<"write, data="<<d.myValue<<" in thread="<<std::this_thread::get_id()<<std::endl;
     myBuffer.pushToBuffer(d);
 }
 
