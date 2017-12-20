@@ -18,5 +18,5 @@ add_library(${BUFFER_LIB_NAME} SHARED ${BUFFER_SRC})
 
 set(BUFFER_MAIN_SRC main.cpp) 
 add_executable(appBuffer ${BUFFER_MAIN_SRC}) 
-target_link_libraries(appBuffer ${BUFFER_LIB_NAME} ${THREAD_LIB_NAME})
+target_link_libraries(appBuffer ${BUFFER_LIB_NAME} ${THREAD_LIB_NAME} pthread)
 
