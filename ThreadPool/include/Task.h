@@ -12,7 +12,7 @@
 class Task
 {
 public:
-    explicit Task(void (*func)(void* arg), void* arg)
+    Task(void (*func)(void* arg), void* arg)
         : myFunc(func)
         , myArg(arg)
     {
